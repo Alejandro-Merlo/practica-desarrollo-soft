@@ -1,4 +1,4 @@
-var app = angular.module('flapperNews', ['ui.router']);
+var app = angular.module('vacacionesPermanentes', ['ui.router']);
 
 app.config([
 '$stateProvider',
@@ -11,20 +11,20 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/home.html',
       controller: 'MainCtrl',
       resolve: {
-        postPromise: ['posts', function(posts){
-          return posts.getAll();
+        postPromise: ['viajes', function(viajes){
+          return viajes.getAll();
         }]
       }
     })
 
   $stateProvider
-    .state('posts', {
-      url: '/posts/{id}',
-      templateUrl: '/posts.html',
-      controller: 'PostsCtrl',
+    .state('viajes', {
+      url: '/viajes/{id}',
+      templateUrl: '/viajes.html',
+      controller: 'ViajesCtrl',
       resolve: {
-        post: ['$stateParams', 'posts', function($stateParams, posts) {
-          return posts.get($stateParams.id);
+        viaje: ['$stateParams', 'viajes', function($stateParams, viajes) {
+          return viajes.get($stateParams.id);
         }]
       }
     });
@@ -66,11 +66,11 @@ app.factory('auth', ['$http', '$window', function($http, $window){
   var auth = {};
 
   auth.saveToken = function (token){
-    $window.localStorage['flapper-news-token'] = token;
+    $window.localStorage['vacaciones-permanentes-token'] = token;
   };
 
   auth.getToken = function (){
-    return $window.localStorage['flapper-news-token'];
+    return $window.localStorage['vacaciones-permanentes-token'];
   };
 
   auth.isLoggedIn = function(){
@@ -107,7 +107,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
   };
 
   auth.logOut = function(){
-    $window.localStorage.removeItem('flapper-news-token');
+    $window.localStorage.removeItem('vacaciones-permanentes-token');
   };
 
   return auth;
@@ -116,51 +116,35 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 
 
 
-app.factory('posts', ['$http', 'auth', function($http, auth){
+app.factory('viajes', ['$http', 'auth', function($http, auth){
   var o = {
-    posts: []
+    viajes: []
   };
 
   o.getAll = function() {
-    return $http.get('/posts').success(function(data){
-      angular.copy(data, o.posts);
+    return $http.get('/viajes').success(function(data){
+      angular.copy(data, o.viajes);
     });
   };
 
-  o.create = function(post) {
-    return $http.post('/posts', post, {
+  o.create = function(viaje) {
+    return $http.post('/viajes', viaje, {
       headers: {Authorization: 'Bearer '+auth.getToken()}
     }).success(function(data){
-      o.posts.push(data);
-    });
-  };
-
-  o.upvote = function(post) {
-    return $http.put('/posts/' + post._id + '/upvote', null, {
-      headers: {Authorization: 'Bearer '+auth.getToken()}
-    }).success(function(data){
-      post.upvotes += 1;
+      o.viajes.push(data);
     });
   };
 
   o.get = function(id) {
-    return $http.get('/posts/' + id).then(function(res){
+    return $http.get('/viajes/' + id).then(function(res){
       return res.data;
     });
   };
 
-  o.addComment = function(id, comment) {
-    return $http.post('/posts/' + id + '/comments', comment, {
+  o.addDestino = function(id, destino) {
+    return $http.post('/viajes/' + id + '/destinos', destino, {
       headers: {Authorization: 'Bearer '+auth.getToken()}
     })
-  };
-
-  o.upvoteComment = function(post, comment) {
-    return $http.put('/posts/' + post._id + '/comments/'+ comment._id + '/upvote', null, {
-      headers: {Authorization: 'Bearer '+auth.getToken()}
-    }).success(function(data){
-      comment.upvotes += 1;
-    });
   };
 
   return o;
@@ -171,27 +155,21 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
 
 app.controller('MainCtrl', [
 '$scope',
-'posts',
+'viajes',
 'auth',
-function($scope, posts, auth){
+function($scope, viajes, auth){
 
-  $scope.posts = posts.posts
+  $scope.viajes = viajes.viajes
   $scope.isLoggedIn = auth.isLoggedIn;
 
-  $scope.addPost = function(){
-    if(!$scope.title || $scope.title === '') { return; }
+  $scope.addViaje = function(){
+    if(!$scope.nombre || $scope.nombre === '') { return; }
   
-    posts.create({
-      title: $scope.title,
-      link: $scope.link,
+    viajes.create({
+      nombre: $scope.nombre,
     });
-    $scope.title = '';
-    $scope.link = '';
+    $scope.nombre = '';
     /*$scope.time = new Date();*/
-  };
-
-  $scope.incrementUpvotes = function(post) {
-    posts.upvote(post);
   };
 
 }]);
@@ -200,36 +178,31 @@ function($scope, posts, auth){
 
 
 
-app.controller('PostsCtrl', [
+app.controller('ViajesCtrl', [
 '$scope',
-'posts',
-'post',
+'viajes',
+'viaje',
 'auth',
-function($scope, posts, post, auth){
+'$state',
+function($scope, viajes, viaje, auth, $state){
 
-  $scope.post = post;
+  $scope.viaje = viaje;
   $scope.isLoggedIn = auth.isLoggedIn;
 
-  $scope.addComment = function(){
-    if($scope.body === '') { return; }
+  $scope.addDestino = function(){
+    if(!$scope.ciudad || $scope.ciudad === '') { return; }
 
-    posts.addComment(post._id, {
-      body: $scope.body,
-      author: 'user',
-    }).success(function(comment) {
-      $scope.post.comments.push(comment);
+    viajes.addDestino(viaje._id, {
+      ciudad: $scope.ciudad,
+    }).success(function(destino) {
+      $scope.viaje.destinos.push(destino);
     });
-    $scope.body = '';
+    $scope.ciudad = '';
   };
 
-  $scope.incrementUpvotes = function(comment){
-    posts.upvoteComment(post, comment);
+  $scope.goBack = function(){
+    $state.go('home');
   };
-
-  /Metodo para volver a la lista de posts/
-  /*$scope.goBack = function(){
-    $window.location.href = "/home";
-  };*/
 
 }]);
 
