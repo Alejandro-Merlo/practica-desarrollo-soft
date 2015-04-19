@@ -147,6 +147,14 @@ app.factory('viajes', ['$http', 'auth', function($http, auth){
     })
   };
 
+  o.delete = function(id) {
+  	return $http.post('/viajes/' + id, {
+  		headers: {Authorization: 'Bearer '+auth.getToken()}
+  	}).success(function(data) {
+      o.viajes.push(data);
+    });
+  };
+
   return o;
 }]);
 
@@ -169,8 +177,11 @@ function($scope, viajes, auth){
       nombre: $scope.nombre,
     });
     $scope.nombre = '';
-    /*$scope.time = new Date();*/
   };
+
+  $scope.delViaje = function(id){
+  	viajes.delete(id);
+  }
 
 }]);
 
@@ -191,13 +202,19 @@ function($scope, viajes, viaje, auth, $state){
 
   $scope.addDestino = function(){
     if(!$scope.ciudad || $scope.ciudad === '') { return; }
+    if(!$scope.fechaArribo || $scope.fechaArribo === '') { return; }
+    if(!$scope.fechaPartida || $scope.fechaPartida === '') { return; }
 
     viajes.addDestino(viaje._id, {
       ciudad: $scope.ciudad,
+      fechaArribo: new Date($scope.fechaArribo),
+      fechaPartida: new Date($scope.fechaPartida),
     }).success(function(destino) {
       $scope.viaje.destinos.push(destino);
     });
     $scope.ciudad = '';
+    $scope.fechaArribo = '';
+    $scope.fechaPartida = '';
   };
 
   $scope.goBack = function(){

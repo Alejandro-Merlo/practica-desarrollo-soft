@@ -39,6 +39,14 @@ router.post('/viajes', auth, function(req, res, next) {
   });
 });
 
+router.post('/viajes/:viaje', auth, function(req, res, next) {
+  req.viaje.remove().exec(function(err, viaje){
+    if(err){ return next(err); }
+
+    res.json(viaje);
+  });
+});
+
 router.param('viaje', function(req, res, next, id) {
   var query = Viaje.findById(id);
 

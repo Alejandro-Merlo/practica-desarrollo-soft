@@ -36,9 +36,8 @@
 
       <div ng-repeat="viaje in viajes | orderBy:'-nombre'">
           <span>
-             {{viaje.nombre}} - <a href="#/viajes/{{viaje._id}}">Destinos: {{viaje.destinos.length}}</a>
+             {{viaje.nombre}} - <a href="#/viajes/{{viaje._id}}">Destinos: {{viaje.destinos.length}}</a> - <a href="" ng-click="delViaje(viaje._id)">Borrar</a>
           </span>
-          <span am-time-ago="viaje.time"></span>
         </span>
       </div>
 
@@ -64,13 +63,12 @@
       </h3>
     </div>
 
-    <div ng-repeat="destino in destino.destinos | orderBy:'-ciudad'">
+    <div ng-repeat="destino in viaje.destinos | orderBy:'-ciudad'">
       <span style="font-size:20px; margin-left:10px;">
-        {{destino.ciudad}}
+        {{destino.ciudad}} (llegada: {{destino.fechaArribo.toString()}} - partida: {{destino.fechaPartida.toString()}})
       </span>
     </div>
 
-    <div>
     <form ng-submit="addDestino(viaje)"
       ng-show="isLoggedIn()"
       style="margin-top:30px;">
@@ -82,13 +80,24 @@
         placeholder="Ciudad"
         ng-model="ciudad"></input>
       </div>
+
+      <div class="form-group">
+        <input type="text"
+        class="form-control"
+        placeholder="FechaArribo"
+        ng-model="fechaArribo"></input>
+      </div>
+
+      <div class="form-group">
+        <input type="text"
+        class="form-control"
+        placeholder="FechaPartida"
+        ng-model="fechaPartida"></input>
+      </div>
+
       <button type="submit" class="btn btn-primary">Agregar destino</button>
       <button ng-click="goBack()" class="btn btn-primary">Volver</button>
     </form>
-    <!-- <form action="/">
-      <input type="submit" class="btn btn-primary" value="Back">
-    </form> -->
-    </div>
   </script>
 
   <script type="text/ng-template" id="/register.html">
