@@ -2,11 +2,16 @@
 
 <head>
   <title>Vacaciones Permanentes</title>
-  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
-  <script src="/javascripts/angularApp.js"></script>
+  <!-- bower:css -->
+  <link rel="stylesheet" href="/javascripts/lib/bootstrap/dist/css/bootstrap.css" />
+  <!-- endbower -->
+  <!-- bower:js-->
+  <script src="/javascripts/lib/jquery/dist/jquery.js"></script>
+  <script src="/javascripts/lib/angular/angular.js"></script>
+  <script src="/javascripts/lib/angular-ui-router/release/angular-ui-router.js"></script>
+  <script src="/javascripts/lib/bootstrap/dist/js/bootstrap.js"></script>
+  <!-- endbower-->
+<script src="/javascripts/angularApp.js"></script>
   <style> .glyphicon-thumbs-up { cursor:pointer } </style>
 </head>
 
@@ -31,10 +36,10 @@
       </div>
 
       <div ng-hide="isLoggedIn()">
-        <h3>Necesitas <a href="/#/login">conectarte</a> o <a href="/#/register">registrarte</a> antes de poder crear un viaje.</h3>
+        <h3>Necesitas <a href="/#/login">logearte</a> o <a href="/#/register">registrarte</a> antes de poder crear un viaje.</h3>
       </div>
 
-      <div ng-repeat="viaje in viajes | orderBy:'-nombre'">
+      <div ng-show="isLoggedIn()" ng-repeat="viaje in viajes | orderBy:'-nombre'">
           <span>
              {{viaje.nombre}} - <a href="#/viajes/{{viaje._id}}">Destinos: {{viaje.destinos.length}}</a> - <a href="" ng-click="delViaje(viaje._id)">Borrar</a>
           </span>
@@ -154,7 +159,7 @@
         placeholder="Contraseña"
         ng-model="user.password"></input>
       </div>
-      <button type="submit" class="btn btn-primary">Conectarse</button>
+      <button type="submit" class="btn btn-primary">Log in</button>
     </form>
   </script>
 

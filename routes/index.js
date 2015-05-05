@@ -20,8 +20,10 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.get('/viajes', function(req, res, next) {
-  Viaje.find(function(err, viajes){
+router.get('/viajes', auth, function(req, res, next) {
+  var query = Viaje.find().where('usuario', req.payload.username);
+
+  query.exec( function(err, viajes){
     if(err){ return next(err); }
 
     res.json(viajes);
@@ -30,7 +32,7 @@ router.get('/viajes', function(req, res, next) {
 
 router.post('/viajes', auth, function(req, res, next) {
   var viaje = new Viaje(req.body);
-  viaje.author = req.payload.username;
+  viaje.usuario = req.payload.username;
 
   viaje.save(function(err, viaje){
     if(err){ return next(err); }
@@ -39,11 +41,13 @@ router.post('/viajes', auth, function(req, res, next) {
   });
 });
 
-router.post('/viajes/:viaje', auth, function(req, res, next) {
-  req.viaje.remove().exec(function(err, viaje){
+router.delete('/viajes/:viaje', auth, function(req, res, next) {
+  viaje = req.viaje;
+
+  viaje.remove(function(err, viaje){
     if(err){ return next(err); }
 
-    res.json(viaje);
+    res.json();
   });
 });
 
@@ -88,7 +92,7 @@ router.param('destino', function(req, res, next, id) {
 
   query.exec(function (err, destino){
     if (err) { return next(err); }
-    if (!destino) { return next(new Error('no se encuentra el destino')); }
+    if (!destino) { return next(new Error('No se encuentra el destino')); }
 
     req.destino = destino;
     return next();

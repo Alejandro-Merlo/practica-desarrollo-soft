@@ -121,16 +121,20 @@ app.factory('viajes', ['$http', 'auth', function($http, auth){
     viajes: []
   };
 
+  getToken = function() {
+  	return {
+      headers: {Authorization: 'Bearer '+auth.getToken()}
+    }
+  }
+
   o.getAll = function() {
-    return $http.get('/viajes').success(function(data){
+    return $http.get('/viajes', getToken()).success(function(data){
       angular.copy(data, o.viajes);
     });
   };
 
   o.create = function(viaje) {
-    return $http.post('/viajes', viaje, {
-      headers: {Authorization: 'Bearer '+auth.getToken()}
-    }).success(function(data){
+    return $http.post('/viajes', viaje, getToken()).success(function(data){
       o.viajes.push(data);
     });
   };
@@ -142,16 +146,13 @@ app.factory('viajes', ['$http', 'auth', function($http, auth){
   };
 
   o.addDestino = function(id, destino) {
-    return $http.post('/viajes/' + id + '/destinos', destino, {
-      headers: {Authorization: 'Bearer '+auth.getToken()}
-    })
+    return $http.post('/viajes/' + id + '/destinos', destino, getToken())
   };
 
   o.delete = function(id) {
-  	return $http.post('/viajes/' + id, {
-  		headers: {Authorization: 'Bearer '+auth.getToken()}
-  	}).success(function(data) {
-      o.viajes.push(data);
+  	return $http.delete('/viajes/' + id, getToken()
+  	).success(function(data) {
+      o.getAll();
     });
   };
 
@@ -165,9 +166,9 @@ app.controller('MainCtrl', [
 '$scope',
 'viajes',
 'auth',
-function($scope, viajes, auth){
+function($scope, viajes, auth, $window){
 
-  $scope.viajes = viajes.viajes
+  $scope.viajes = viajes.viajes;
   $scope.isLoggedIn = auth.isLoggedIn;
 
   $scope.addViaje = function(){
