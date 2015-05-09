@@ -1,4 +1,4 @@
-var app = angular.module('vacacionesPermanentes', ['ui.router', 'google.places', 'uiGmapgoogle-maps']);
+var app = angular.module('vacacionesPermanentes', ['ui.router', 'google.places', 'uiGmapgoogle-maps', 'ngDialog']);
 
 app.config([
 '$stateProvider',
@@ -156,6 +156,10 @@ app.factory('viajes', ['$http', 'auth', function($http, auth){
     });
   };
 
+  o.delDestino = function(id, idDestino) {
+  	return $http.delete('/viajes/' + id + '/destinos/' + idDestino, getToken())
+  };
+
   return o;
 }]);
 
@@ -166,7 +170,8 @@ app.controller('MainCtrl', [
 '$scope',
 'viajes',
 'auth',
-function($scope, viajes, auth, $window){
+'ngDialog',
+function($scope, viajes, auth, ngDialog){
 
   $scope.viajes = viajes.viajes;
   $scope.isLoggedIn = auth.isLoggedIn;
@@ -180,8 +185,16 @@ function($scope, viajes, auth, $window){
     $scope.nombre = '';
   };
 
-  $scope.delViaje = function(id){
-  	viajes.delete(id);
+  $scope.delViaje = function(viaje){
+  	var objeto = viaje.nombre;
+
+  	ngDialog.openConfirm({
+  	  template: 'deleteConfirmation',
+  	  data: { objeto },
+  	  className: 'ngdialog-theme-default'
+  	}).then(function() {
+  		viajes.delete(viaje._id);
+  	})
   }
 
 }]);
@@ -196,12 +209,15 @@ app.controller('ViajesCtrl', [
 'viaje',
 'auth',
 '$state',
-function($scope, viajes, viaje, auth, $state){
+'$window',
+'ngDialog',
+function($scope, viajes, viaje, auth, $state, $window, ngDialog){
 
   $scope.viaje               = viaje;
   $scope.isLoggedIn          = auth.isLoggedIn;
   $scope.autocompleteOptions = { types: ['(cities)'] }
   $scope.googlemap           = {}
+
   $scope.mapOptions = {
       minZoom: 3,
       zoomControl: false,
@@ -264,7 +280,7 @@ function($scope, viajes, viaje, auth, $state){
       });
     };
 
-  	$scope.map.center = {latitude: viaje.destinos[0].localizacion[0], longitude: viaje.destinos[0].localizacion[1] }
+  	$scope.map.center = { latitude: viaje.destinos[0].localizacion[0], longitude: viaje.destinos[0].localizacion[1] }
     $scope.markers    = { models: models }
     $scope.lines      = { path: paths, stroke: { color: "#DAA520", weight: 10, opacity: 0.75 } }
   }
@@ -286,6 +302,7 @@ function($scope, viajes, viaje, auth, $state){
     $scope.ciudad = '';
     $scope.fechaArribo = '';
     $scope.fechaPartida = '';
+    $window.location.reload();
   };
 
   $scope.goBack = function(){
@@ -294,6 +311,20 @@ function($scope, viajes, viaje, auth, $state){
 
   $scope.printDate = function(stringDate){
     return stringDate.split("T")[0];
+  };
+
+  $scope.delDestino = function(viaje_id, destino){
+  	var objeto = 'ruta a ' + destino.ciudad;
+
+  	ngDialog.openConfirm({
+  	  template: 'deleteConfirmation',
+  	  data: { objeto },
+  	  className: 'ngdialog-theme-default'
+  	}).then(function() {
+  		viajes.delDestino(viaje_id, destino._id);
+  		$window.location.reload();
+  	})
+
   };
 
 }]);

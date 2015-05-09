@@ -4,6 +4,8 @@
   <title>Vacaciones Permanentes</title>
   <!-- bower:css -->
   <link rel="stylesheet" href="/javascripts/lib/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="/javascripts/lib/ngDialog/css/ngDialog.css" />
+  <link rel="stylesheet" href="/javascripts/lib/ngDialog/css/ngDialog-theme-default.css" />
   <!-- endbower -->
   <link rel="stylesheet" href="/javascripts/lib/angular-google-places-autocomplete/src/autocomplete.css">
   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
@@ -14,6 +16,7 @@
   <script src="/javascripts/lib/bootstrap/dist/js/bootstrap.js"></script>
   <script src="/javascripts/lib/lodash/dist/lodash.compat.js"></script>
   <script src="/javascripts/lib/angular-google-maps/dist/angular-google-maps.js"></script>
+  <script src="/javascripts/lib/ngDialog/js/ngDialog.js"></script>
   <!-- endbower-->
   <script src="/javascripts/lib/angular-google-places-autocomplete/src/autocomplete.js"></script>
   <script src="/javascripts/angularApp.js"></script>
@@ -51,7 +54,7 @@
       </div>
       <div ng-show="isLoggedIn()" ng-repeat="viaje in viajes | orderBy:'-nombre'">
           <span style="font-size:16px; margin-left:10px;">
-             {{viaje.nombre}} - <a href="#/viajes/{{viaje._id}}">Destinos: {{viaje.destinos.length}}</a> - <a href="" ng-click="delViaje(viaje._id)">Borrar</a>
+             {{viaje.nombre}} - <a href="#/viajes/{{viaje._id}}">Destinos: {{viaje.destinos.length}}</a> - <a href="" ng-click="delViaje(viaje)">Borrar</a>
           </span>
         </span>
       </div>
@@ -82,7 +85,7 @@
     <ol>
       <div ng-show="isLoggedIn()" ng-repeat="destino in viaje.destinos | orderBy:'-fechaArribo':true">
         <li style="font-size:20px; margin-left:10px;">
-          {{destino.ciudad}} (llegada: {{ printDate(destino.fechaArribo) }} - partida: {{ printDate(destino.fechaPartida) }})
+          {{destino.ciudad}} (llegada: {{ printDate(destino.fechaArribo) }} - partida: {{ printDate(destino.fechaPartida) }}) - <a style="font-size:15px" href="" ng-click="delDestino(viaje._id, destino)">Eliminar destino</a>
         </li>
       </div>
     </ol>
@@ -91,8 +94,8 @@
     <div ng-show="isLoggedIn()">
       <h3>Ruta</h3>
       <ui-gmap-google-map center="map.center" zoom="map.zoom" options="map.options" control="googlemap" events="map.events">
-        <ui-gmap-markers models="markers.models" coords="'self'" icon="'icon'" events="markers.events"></ui-gmap-markers>
-        <ui-gmap-polyline path="lines.path" stroke=lines.stroke geodesic="true" static="true"></ui-gmap-polyline>
+        <ui-gmap-markers models="markers.models" coords="'self'" icon="'icon'" fit='true' events="markers.events"></ui-gmap-markers>
+        <ui-gmap-polyline path="lines.path" stroke=lines.stroke geodesic="true" static="true" fit='true'></ui-gmap-polyline>
       </ui-gmap-google-map>
     </div>
 
@@ -186,6 +189,15 @@
       </div>
       <button type="submit" class="btn btn-primary">Log in</button>
     </form>
+  </script>
+
+  <script type="text/ng-template" id="deleteConfirmation">
+    <h3>Confirmación de borrado</h3>
+    <p>¿Estas seguro de que quieres eliminar {{ ngDialogData.objeto }}?</p>
+    <div class="ngdialog-buttons">
+      <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog()">Cancelar</button>
+      <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm()">Aceptar</button>
+    </div>
   </script>
 
 </body>

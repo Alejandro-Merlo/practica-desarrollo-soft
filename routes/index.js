@@ -47,7 +47,15 @@ router.delete('/viajes/:viaje', auth, function(req, res, next) {
   viaje.remove(function(err, viaje){
     if(err){ return next(err); }
 
-    res.json();
+    if (viaje.destinos.length > 0) {
+      for (var i = 0; i < viaje.destinos.length; i++) {
+      	destino = viaje.destinos[i];
+      	Destino.findById(destino).remove().exec();
+      }
+      res.json();
+    } else {
+      res.json();
+    }
   });
 });
 
@@ -83,6 +91,22 @@ router.post('/viajes/:viaje/destinos', auth, function(req, res, next) {
       if(err){ return next(err); }
 
       res.json(destino);
+    });
+  });
+});
+
+router.delete('/viajes/:viaje/destinos/:destino', auth, function(req, res, next) {
+  destino = req.destino;
+
+  destino.remove(function(err, destino){
+    if(err){ return next(err); }
+
+    index = req.viaje.destinos.indexOf(destino);
+    req.viaje.destinos.splice(index, 1);
+    req.viaje.save(function(err, viaje) {
+      if(err){ return next(err); }
+
+      res.json();
     });
   });
 });
