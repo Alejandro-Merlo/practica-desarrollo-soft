@@ -32,6 +32,6 @@
     "commit": "0ab78f038e4a135fa3decd1bef050c8573f9a951"
   },
   "_source": "git://github.com/arunisrael/angularjs-google-places.git",
-  "_target": "0.1.0",
+  "_target": "~0.1.0",
   "_originalSource": "angularjs-google-places"
 }

@@ -1,4 +1,4 @@
-var app = angular.module('vacacionesPermanentes', ['ui.router', 'google.places', 'uiGmapgoogle-maps', 'ngDialog']);
+var app = angular.module('vacacionesPermanentes', ['ui.router', 'google.places', 'uiGmapgoogle-maps', 'ngDialog', 'ui.calendar']);
 
 app.config([
 '$stateProvider',
@@ -215,9 +215,27 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
 
   $scope.viaje               = viaje;
   $scope.isLoggedIn          = auth.isLoggedIn;
-  $scope.autocompleteOptions = { types: ['(cities)'] }
-  $scope.googlemap           = {}
+  $scope.autocompleteOptions = { types: ['(cities)'] };
+  $scope.googlemap           = {};
+  $scope.eventSources        = [];
 
+  // Configuración del calendario
+  $scope.uiConfig = {
+      calendar:{
+        height: 450,
+        editable: false,
+        header:{
+          left: 'month basicWeek basicDay agendaWeek agendaDay',
+          center: 'title',
+          right: 'today prev,next'
+        },
+        dayClick: $scope.alertEventOnClick,
+        eventDrop: $scope.alertOnDrop,
+        eventResize: $scope.alertOnResize
+      }
+    };
+
+  // Configuración de google map
   $scope.mapOptions = {
       minZoom: 3,
       zoomControl: false,
@@ -261,11 +279,20 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
     }
   };
 
+  // Resuelve la ruta a seguir en el viaje
   if (viaje.destinos.length != 0) {
-    var models = []
-    var paths  = []
+  	var events = [];
+    var models = [];
+    var paths  = [];
     for(var i = 0; i < viaje.destinos.length; i++) {
       var destino = viaje.destinos[i];
+
+      events.push({
+        title: destino.ciudad,
+        start: destino.fechaArribo,
+        end: destino.fechaPartida,
+        className: [destino.ciudad]
+      });
 
       models.push({
       	id: i+1,
@@ -280,9 +307,10 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
       });
     };
 
-  	$scope.map.center = { latitude: viaje.destinos[0].localizacion[0], longitude: viaje.destinos[0].localizacion[1] }
-    $scope.markers    = { models: models }
-    $scope.lines      = { path: paths, stroke: { color: "#DAA520", weight: 10, opacity: 0.75 } }
+    $scope.eventSources = [events];
+  	$scope.map.center   = { latitude: viaje.destinos[0].localizacion[0], longitude: viaje.destinos[0].localizacion[1] }
+    $scope.markers      = { models: models }
+    $scope.lines        = { path: paths, stroke: { color: "#DAA520", weight: 10, opacity: 0.75 } }
   }
 
   $scope.addDestino = function(){
@@ -299,6 +327,7 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
     }).success(function(destino) {
       $scope.viaje.destinos.push(destino);
     });
+
     $scope.ciudad = '';
     $scope.fechaArribo = '';
     $scope.fechaPartida = '';

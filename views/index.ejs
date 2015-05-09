@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="/javascripts/lib/bootstrap/dist/css/bootstrap.css" />
   <link rel="stylesheet" href="/javascripts/lib/ngDialog/css/ngDialog.css" />
   <link rel="stylesheet" href="/javascripts/lib/ngDialog/css/ngDialog-theme-default.css" />
+  <link rel="stylesheet" href="/javascripts/lib/fullcalendar/dist/fullcalendar.css" />
   <!-- endbower -->
   <link rel="stylesheet" href="/javascripts/lib/angular-google-places-autocomplete/src/autocomplete.css">
   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
@@ -17,6 +18,9 @@
   <script src="/javascripts/lib/lodash/dist/lodash.compat.js"></script>
   <script src="/javascripts/lib/angular-google-maps/dist/angular-google-maps.js"></script>
   <script src="/javascripts/lib/ngDialog/js/ngDialog.js"></script>
+  <script src="/javascripts/lib/moment/moment.js"></script>
+  <script src="/javascripts/lib/fullcalendar/dist/fullcalendar.js"></script>
+  <script src="/javascripts/lib/angular-ui-calendar/src/calendar.js"></script>
   <!-- endbower-->
   <script src="/javascripts/lib/angular-google-places-autocomplete/src/autocomplete.js"></script>
   <script src="/javascripts/angularApp.js"></script>
@@ -128,6 +132,9 @@
       <button type="submit" class="btn btn-primary">Agregar destino</button>
       <button ng-click="goBack()" class="btn btn-primary">Volver</button>
     </form>
+
+    <h3>Calendario de eventos</h3>
+    <div ui-calendar="uiConfig.calendar" ng-model="eventSources"></div>
 
     <!--<h5>Result:</h5>
     <pre>{{ciudad | json}}</pre>-->
