@@ -1,4 +1,4 @@
-var app = angular.module('vacacionesPermanentes', ['ui.router']);
+var app = angular.module('vacacionesPermanentes', ['ui.router', 'google.places', 'uiGmapgoogle-maps']);
 
 app.config([
 '$stateProvider',
@@ -198,8 +198,76 @@ app.controller('ViajesCtrl', [
 '$state',
 function($scope, viajes, viaje, auth, $state){
 
-  $scope.viaje = viaje;
-  $scope.isLoggedIn = auth.isLoggedIn;
+  $scope.viaje               = viaje;
+  $scope.isLoggedIn          = auth.isLoggedIn;
+  $scope.autocompleteOptions = { types: ['(cities)'] }
+  $scope.googlemap           = {}
+  $scope.mapOptions = {
+      minZoom: 3,
+      zoomControl: false,
+      draggable: true,
+      navigationControl: false,
+      mapTypeControl: false,
+      scaleControl: false,
+      streetViewControl: false,
+      disableDoubleClickZoom: false,
+      keyboardShortcuts: true,
+      markers: {
+          selected: {}
+      },
+      styles: [{
+          featureType: "poi",
+          elementType: "labels",
+          stylers: [{
+              visibility: "off"
+          }]
+      }, {
+          featureType: "transit",
+          elementType: "all",
+          stylers: [{
+              visibility: "off"
+          }]
+      }],
+  };
+
+  $scope.map = {
+  	center: {
+  	  latitude: 32.779680,
+  	  longitude: -79.935493
+    },
+    zoom: 6,
+    control:{} ,
+    options:$scope.mapOptions,
+    events: {
+      tilesloaded: function (maps, eventName, args) {},
+      dragend: function (maps, eventName, args) {},
+      zoom_changed: function (maps, eventName, args) {}
+    }
+  };
+
+  if (viaje.destinos.length != 0) {
+    var models = []
+    var paths  = []
+    for(var i = 0; i < viaje.destinos.length; i++) {
+      var destino = viaje.destinos[i];
+
+      models.push({
+      	id: i+1,
+      	latitude: destino.localizacion[0],
+      	longitude: destino.localizacion[1],
+      	icon: destino.icono
+      	});
+
+      paths.push({
+      	latitude: destino.localizacion[0],
+      	longitude: destino.localizacion[1]
+      });
+    };
+
+  	$scope.map.center = {latitude: viaje.destinos[0].localizacion[0], longitude: viaje.destinos[0].localizacion[1] }
+    $scope.markers    = { models: models }
+    $scope.lines      = { path: paths, stroke: { color: "#DAA520", weight: 10, opacity: 0.75 } }
+  }
 
   $scope.addDestino = function(){
     if(!$scope.ciudad || $scope.ciudad === '') { return; }
@@ -207,7 +275,9 @@ function($scope, viajes, viaje, auth, $state){
     if(!$scope.fechaPartida || $scope.fechaPartida === '') { return; }
 
     viajes.addDestino(viaje._id, {
-      ciudad: $scope.ciudad,
+      ciudad: $scope.ciudad.formatted_address,
+      localizacion: [$scope.ciudad.geometry.location.A, $scope.ciudad.geometry.location.F],
+      icono: $scope.ciudad.icon,
       fechaArribo: new Date($scope.fechaArribo),
       fechaPartida: new Date($scope.fechaPartida),
     }).success(function(destino) {
@@ -220,6 +290,10 @@ function($scope, viajes, viaje, auth, $state){
 
   $scope.goBack = function(){
     $state.go('home');
+  };
+
+  $scope.printDate = function(stringDate){
+    return stringDate.split("T")[0];
   };
 
 }]);

@@ -5,14 +5,21 @@
   <!-- bower:css -->
   <link rel="stylesheet" href="/javascripts/lib/bootstrap/dist/css/bootstrap.css" />
   <!-- endbower -->
+  <link rel="stylesheet" href="/javascripts/lib/angular-google-places-autocomplete/src/autocomplete.css">
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
   <!-- bower:js-->
   <script src="/javascripts/lib/jquery/dist/jquery.js"></script>
   <script src="/javascripts/lib/angular/angular.js"></script>
   <script src="/javascripts/lib/angular-ui-router/release/angular-ui-router.js"></script>
   <script src="/javascripts/lib/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="/javascripts/lib/lodash/dist/lodash.compat.js"></script>
+  <script src="/javascripts/lib/angular-google-maps/dist/angular-google-maps.js"></script>
   <!-- endbower-->
-<script src="/javascripts/angularApp.js"></script>
-  <style> .glyphicon-thumbs-up { cursor:pointer } </style>
+  <script src="/javascripts/lib/angular-google-places-autocomplete/src/autocomplete.js"></script>
+  <script src="/javascripts/angularApp.js"></script>
+  <style>
+    .angular-google-map-container { height: 600px; }
+  </style>
 </head>
 
 <body ng-app="vacacionesPermanentes">
@@ -39,8 +46,11 @@
         <h3>Necesitas <a href="/#/login">logearte</a> o <a href="/#/register">registrarte</a> antes de poder crear un viaje.</h3>
       </div>
 
+      <div ng-show="isLoggedIn()">
+      <h3>Tus viajes</h3>
+      </div>
       <div ng-show="isLoggedIn()" ng-repeat="viaje in viajes | orderBy:'-nombre'">
-          <span>
+          <span style="font-size:16px; margin-left:10px;">
              {{viaje.nombre}} - <a href="#/viajes/{{viaje._id}}">Destinos: {{viaje.destinos.length}}</a> - <a href="" ng-click="delViaje(viaje._id)">Borrar</a>
           </span>
         </span>
@@ -62,16 +72,28 @@
   </script>
 
   <script type="text/ng-template" id="/viajes.html">
-    <div class="page-header">
+    <div ng-show="isLoggedIn()" class="page-header">
       <h3>
           {{viaje.nombre}}
       </h3>
     </div>
 
-    <div ng-repeat="destino in viaje.destinos | orderBy:'-ciudad'">
-      <span style="font-size:20px; margin-left:10px;">
-        {{destino.ciudad}} (llegada: {{destino.fechaArribo.toString()}} - partida: {{destino.fechaPartida.toString()}})
-      </span>
+    <h3 ng-show="isLoggedIn()">Destinos</h3>
+    <ol>
+      <div ng-show="isLoggedIn()" ng-repeat="destino in viaje.destinos | orderBy:'-fechaArribo':true">
+        <li style="font-size:20px; margin-left:10px;">
+          {{destino.ciudad}} (llegada: {{ printDate(destino.fechaArribo) }} - partida: {{ printDate(destino.fechaPartida) }})
+        </li>
+      </div>
+    </ol>
+    <br/>
+
+    <div ng-show="isLoggedIn()">
+      <h3>Ruta</h3>
+      <ui-gmap-google-map center="map.center" zoom="map.zoom" options="map.options" control="googlemap" events="map.events">
+        <ui-gmap-markers models="markers.models" coords="'self'" icon="'icon'" events="markers.events"></ui-gmap-markers>
+        <ui-gmap-polyline path="lines.path" stroke=lines.stroke geodesic="true" static="true"></ui-gmap-polyline>
+      </ui-gmap-google-map>
     </div>
 
     <form ng-submit="addDestino(viaje)"
@@ -83,26 +105,29 @@
         <input type="text"
         class="form-control"
         placeholder="Ciudad"
-        ng-model="ciudad"></input>
+        g-places-autocomplete options="autocompleteOptions" ng-model="ciudad"></input>
       </div>
 
       <div class="form-group">
         <input type="text"
         class="form-control"
-        placeholder="FechaArribo"
+        placeholder="Fecha Llegada"
         ng-model="fechaArribo"></input>
       </div>
 
       <div class="form-group">
         <input type="text"
         class="form-control"
-        placeholder="FechaPartida"
+        placeholder="Fecha Partida"
         ng-model="fechaPartida"></input>
       </div>
 
       <button type="submit" class="btn btn-primary">Agregar destino</button>
       <button ng-click="goBack()" class="btn btn-primary">Volver</button>
     </form>
+
+    <!--<h5>Result:</h5>
+    <pre>{{ciudad | json}}</pre>-->
   </script>
 
   <script type="text/ng-template" id="/register.html">
