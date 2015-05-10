@@ -1,4 +1,4 @@
-var app = angular.module('vacacionesPermanentes', ['ui.router', 'google.places', 'uiGmapgoogle-maps', 'ngDialog', 'ui.calendar']);
+var app = angular.module('vacacionesPermanentes', ['ui.router', 'google.places', 'uiGmapgoogle-maps', 'ngDialog', 'ui.calendar', 'ui.bootstrap']);
 
 app.config([
 '$stateProvider',
@@ -218,6 +218,8 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
   $scope.autocompleteOptions = { types: ['(cities)'] };
   $scope.googlemap           = {};
   $scope.eventSources        = [];
+  $scope.fechaArribo         = new Date();
+  $scope.fechaPartida        = new Date();
 
   // Configuración del calendario
   $scope.uiConfig = {
@@ -262,6 +264,11 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
               visibility: "off"
           }]
       }],
+  };
+
+  $scope.dateOptions = {
+    formatYear: 'yy',
+    startingDay: 1
   };
 
   $scope.map = {
@@ -322,8 +329,8 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
       ciudad: $scope.ciudad.formatted_address,
       localizacion: [$scope.ciudad.geometry.location.A, $scope.ciudad.geometry.location.F],
       icono: $scope.ciudad.icon,
-      fechaArribo: new Date($scope.fechaArribo),
-      fechaPartida: new Date($scope.fechaPartida),
+      fechaArribo: $scope.fechaArribo,
+      fechaPartida: $scope.fechaPartida,
     }).success(function(destino) {
       $scope.viaje.destinos.push(destino);
     });
@@ -354,6 +361,20 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
   		$window.location.reload();
   	})
 
+  };
+
+  $scope.openDatepicker1 = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    $scope.opened1 = true;
+  };
+
+  $scope.openDatepicker2 = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    $scope.opened2 = true;
   };
 
 }]);

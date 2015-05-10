@@ -34,6 +34,7 @@
     "angular-google-places-autocomplete": "~0.2.5",
     "angularjs-google-places": "~0.1.0",
     "ngDialog": "~0.4.0",
-    "angular-ui-calendar": "latest"
+    "angular-ui-calendar": "latest",
+    "angular-bootstrap": "latest"
   }
 }

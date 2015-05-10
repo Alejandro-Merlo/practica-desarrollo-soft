@@ -21,6 +21,7 @@
   <script src="/javascripts/lib/moment/moment.js"></script>
   <script src="/javascripts/lib/fullcalendar/dist/fullcalendar.js"></script>
   <script src="/javascripts/lib/angular-ui-calendar/src/calendar.js"></script>
+  <script src="/javascripts/lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
   <!-- endbower-->
   <script src="/javascripts/lib/angular-google-places-autocomplete/src/autocomplete.js"></script>
   <script src="/javascripts/angularApp.js"></script>
@@ -86,21 +87,23 @@
     </div>
 
     <h3 ng-show="isLoggedIn()">Destinos</h3>
-    <ol>
-      <div ng-show="isLoggedIn()" ng-repeat="destino in viaje.destinos | orderBy:'-fechaArribo':true">
-        <li style="font-size:20px; margin-left:10px;">
-          {{destino.ciudad}} (llegada: {{ printDate(destino.fechaArribo) }} - partida: {{ printDate(destino.fechaPartida) }}) - <a style="font-size:15px" href="" ng-click="delDestino(viaje._id, destino)">Eliminar destino</a>
-        </li>
-      </div>
-    </ol>
-    <br/>
+    <div class="row">
+      <ol>
+        <div ng-show="isLoggedIn()" ng-repeat="destino in viaje.destinos | orderBy:'-fechaArribo':true">
+          <li style="font-size:20px; margin-left:10px;">
+            {{destino.ciudad}} (llegada: {{ printDate(destino.fechaArribo) }} - partida: {{ printDate(destino.fechaPartida) }}) - <a style="font-size:15px" href="" ng-click="delDestino(viaje._id, destino)">Eliminar destino</a>
+          </li>
+        </div>
+      </ol>
+      <br/>
 
-    <div ng-show="isLoggedIn()">
-      <h3>Ruta</h3>
-      <ui-gmap-google-map center="map.center" zoom="map.zoom" options="map.options" control="googlemap" events="map.events">
-        <ui-gmap-markers models="markers.models" coords="'self'" icon="'icon'" fit='true' events="markers.events"></ui-gmap-markers>
-        <ui-gmap-polyline path="lines.path" stroke=lines.stroke geodesic="true" static="true" fit='true'></ui-gmap-polyline>
-      </ui-gmap-google-map>
+      <div ng-show="isLoggedIn()">
+        <h3>Ruta</h3>
+        <ui-gmap-google-map center="map.center" zoom="map.zoom" options="map.options" control="googlemap" events="map.events">
+          <ui-gmap-markers models="markers.models" coords="'self'" icon="'icon'" fit='true' events="markers.events"></ui-gmap-markers>
+          <ui-gmap-polyline path="lines.path" stroke=lines.stroke geodesic="true" static="true" fit='true'></ui-gmap-polyline>
+        </ui-gmap-google-map>
+      </div>
     </div>
 
     <form ng-submit="addDestino(viaje)"
@@ -115,18 +118,24 @@
         g-places-autocomplete options="autocompleteOptions" ng-model="ciudad"></input>
       </div>
 
-      <div class="form-group">
-        <input type="text"
-        class="form-control"
-        placeholder="Fecha Llegada"
-        ng-model="fechaArribo"></input>
-      </div>
+      <div class="row">
+        <div class="col-md-6">
+            <p class="form-group">
+              <input type="date" class="form-control" datepicker-popup ng-model="fechaArribo" is-open="opened1" max-date="'2020-12-30'" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openDatepicker1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
 
-      <div class="form-group">
-        <input type="text"
-        class="form-control"
-        placeholder="Fecha Partida"
-        ng-model="fechaPartida"></input>
+        <div class="col-md-6">
+          <p class="form-group">
+            <input type="date" class="form-control" datepicker-popup ng-model="fechaPartida" is-open="opened2" max-date="'2020-12-30'" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" ng-click="openDatepicker2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+          </p>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-primary">Agregar destino</button>
