@@ -58,9 +58,8 @@
       <h3>Tus viajes</h3>
       </div>
       <div ng-show="isLoggedIn()" ng-repeat="viaje in viajes | orderBy:'-nombre'">
-          <span style="font-size:16px; margin-left:10px;">
-             {{viaje.nombre}} - <a href="#/viajes/{{viaje._id}}">Destinos: {{viaje.destinos.length}}</a> - <a href="" ng-click="delViaje(viaje)">Borrar</a>
-          </span>
+        <span style="font-size:16px; margin-left:10px;">
+           {{viaje.nombre}} - <a href="#/viajes/{{viaje._id}}">Destinos: {{viaje.destinos.length}}</a> - <a href="" ng-click="delViaje(viaje)">Borrar</a>
         </span>
       </div>
 
@@ -90,17 +89,45 @@
     <div class="row">
       <ol>
         <div ng-show="isLoggedIn()" ng-repeat="destino in viaje.destinos | orderBy:'-fechaArribo':true">
-          <li style="font-size:20px; margin-left:10px;">
-            {{destino.ciudad}} (llegada: {{ printDate(destino.fechaArribo) }} - partida: {{ printDate(destino.fechaPartida) }}) - <a style="font-size:15px" href="" ng-click="delDestino(viaje._id, destino)">Eliminar destino</a>
+          <li style="font-size:15px; margin-left:10px;">
+            {{destino.ciudad}} (llegada: {{ printDate(destino.fechaArribo) }} - partida: {{ printDate(destino.fechaPartida) }})  <a style="font-size:10px" href="" ng-click="delDestino(viaje._id, destino)">Eliminar destino</a>
           </li>
         </div>
       </ol>
       <br/>
 
       <div ng-show="isLoggedIn()">
+        <form ng-submit="addPOI(viaje)">
+          <h3>Crear nuevo punto de interés</h3>
+          <div class="form-group">
+            <input type="text"
+            class="form-control"
+            placeholder="Establecimiento"
+            g-places-autocomplete options="autocompleteOptions2" ng-model="poi"></input>
+          </div>
+          <button type="submit" class="btn btn-primary">Agregar</button>
+        </form>
+
         <h3>Ruta</h3>
+        <div style="margin-left:10px;" ng-show='isLodging()'>
+          <span style="font-size:20px;">Información de hospedaje</span>
+          <br/>
+          <span style="margin-top:10px; margin-left:20px;">Nombre: {{selected.title}}</span>
+          <br/>
+          <span style="margin-top:10px; margin-left:20px;">Dirección: {{selected.address}}</span>
+        </div>
         <ui-gmap-google-map center="map.center" zoom="map.zoom" options="map.options" control="googlemap" events="map.events">
-          <ui-gmap-markers models="markers.models" coords="'self'" icon="'icon'" fit='true' events="markers.events"></ui-gmap-markers>
+          
+          <ui-gmap-markers models="markers.models" coords="'self'" icon="'icon'" click='showInfo()'></ui-gmap-markers>
+
+          <ui-gmap-window coords="selected" show="selected.show" closeClick="selected.closeClick()">
+            <div>
+              <span>{{selected.title}}</span>
+              <br/>
+              <span>Dirección: {{selected.address}}</span>
+            </div>
+          </ui-gmap-window>
+
           <ui-gmap-polyline path="lines.path" stroke=lines.stroke geodesic="true" static="true" fit='true'></ui-gmap-polyline>
         </ui-gmap-google-map>
       </div>
@@ -115,7 +142,7 @@
         <input type="text"
         class="form-control"
         placeholder="Ciudad"
-        g-places-autocomplete options="autocompleteOptions" ng-model="ciudad"></input>
+        g-places-autocomplete options="autocompleteOptions1" ng-model="ciudad"></input>
       </div>
 
       <div class="row">
@@ -145,8 +172,8 @@
     <h3>Calendario de eventos</h3>
     <div ui-calendar="uiConfig.calendar" ng-model="eventSources"></div>
 
-    <!--<h5>Result:</h5>
-    <pre>{{ciudad | json}}</pre>-->
+    <h5>Result:</h5>
+    <pre>{{poi | json}}</pre>
   </script>
 
   <script type="text/ng-template" id="/register.html">

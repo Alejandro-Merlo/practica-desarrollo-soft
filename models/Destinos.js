@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 
 var DestinoSchema = new mongoose.Schema({
   ciudad: String,
+  nombre: String,
   localizacion: [String], // Las coordenadas del lugar
   icono: String,
   fechaArribo: Date,

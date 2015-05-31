@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 require('./models/Destinos');
 require('./models/Viajes');
+require('./models/Pois');
 require('./models/Users');
 require('./config/passport');
 mongoose.connect('mongodb://localhost/news');

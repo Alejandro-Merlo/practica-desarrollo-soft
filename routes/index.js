@@ -13,6 +13,7 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 var User = mongoose.model('User');
 var Destino = mongoose.model('Destino');
+var Poi = mongoose.model('Poi');
 var Viaje = mongoose.model('Viaje');
 
 /* GET home page. */
@@ -75,7 +76,11 @@ router.get('/viajes/:viaje', function(req, res, next) {
   req.viaje.populate('destinos', function(err, viaje) {
     if (err) { return next(err); }
 
-    res.json(viaje);
+      req.viaje.populate('pois', function(err, viaje) {
+        if (err) { return next(err); }
+ 
+        res.json(viaje);
+    });
   });
 });
 
@@ -91,6 +96,22 @@ router.post('/viajes/:viaje/destinos', auth, function(req, res, next) {
       if(err){ return next(err); }
 
       res.json(destino);
+    });
+  });
+});
+
+router.post('/viajes/:viaje/pois', auth, function(req, res, next) {
+  var poi = new Poi(req.body);
+  poi.viaje = req.viaje;
+
+  poi.save(function(err, poi){
+    if(err){ return next(err); }
+
+    req.viaje.pois.push(poi);
+    req.viaje.save(function(err, viaje) {
+      if(err){ return next(err); }
+
+      res.json(poi);
     });
   });
 });

@@ -149,6 +149,10 @@ app.factory('viajes', ['$http', 'auth', function($http, auth){
     return $http.post('/viajes/' + id + '/destinos', destino, getToken())
   };
 
+  o.addPOI = function(id, poi) {
+    return $http.post('/viajes/' + id + '/pois', poi, getToken())
+  };
+
   o.delete = function(id) {
   	return $http.delete('/viajes/' + id, getToken()
   	).success(function(data) {
@@ -213,13 +217,16 @@ app.controller('ViajesCtrl', [
 'ngDialog',
 function($scope, viajes, viaje, auth, $state, $window, ngDialog){
 
-  $scope.viaje               = viaje;
-  $scope.isLoggedIn          = auth.isLoggedIn;
-  $scope.autocompleteOptions = { types: ['(cities)'] };
-  $scope.googlemap           = {};
-  $scope.eventSources        = [];
-  $scope.fechaArribo         = new Date();
-  $scope.fechaPartida        = new Date();
+  $scope.viaje                = viaje;
+  $scope.isLoggedIn           = auth.isLoggedIn;
+  $scope.autocompleteOptions1 = { types: ['(cities)'] };
+  $scope.autocompleteOptions2 = { types: ['establishment'] };
+  $scope.autocompleteOptions3 = { types: ['lodging'] };
+  $scope.googlemap            = {};
+  $scope.eventSources         = [];
+  $scope.fechaArribo          = new Date();
+  $scope.fechaPartida         = new Date();
+  $scope.selected             = {show: false, lodging: false};
 
   // Configuración del calendario
   $scope.uiConfig = {
@@ -276,7 +283,7 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
   	  latitude: 32.779680,
   	  longitude: -79.935493
     },
-    zoom: 6,
+    zoom: 14,
     control:{} ,
     options:$scope.mapOptions,
     events: {
@@ -288,9 +295,9 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
 
   // Resuelve la ruta a seguir en el viaje
   if (viaje.destinos.length != 0) {
-  	var events = [];
-    var models = [];
     var paths  = [];
+    var events = [];
+
     for(var i = 0; i < viaje.destinos.length; i++) {
       var destino = viaje.destinos[i];
 
@@ -301,13 +308,6 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
         className: [destino.ciudad]
       });
 
-      models.push({
-      	id: i+1,
-      	latitude: destino.localizacion[0],
-      	longitude: destino.localizacion[1],
-      	icon: destino.icono
-      	});
-
       paths.push({
       	latitude: destino.localizacion[0],
       	longitude: destino.localizacion[1]
@@ -316,8 +316,54 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
 
     $scope.eventSources = [events];
   	$scope.map.center   = { latitude: viaje.destinos[0].localizacion[0], longitude: viaje.destinos[0].localizacion[1] }
-    $scope.markers      = { models: models }
     $scope.lines        = { path: paths, stroke: { color: "#DAA520", weight: 10, opacity: 0.75 } }
+  }
+
+  if (viaje.pois.length != 0) {
+    var models = [];
+
+    for(var i = 0; i < viaje.pois.length; i++) {
+      var poi = viaje.pois[i];
+      var isLodging = false;
+
+      for(var e = 0; e < poi.types.length; e++) {
+      	if (poi.types[e] == 'lodging') {
+      		isLodging = true;
+      	}
+      }
+
+      marker = {
+      	id: i+1,
+      	latitude: poi.localizacion[0],
+      	longitude: poi.localizacion[1],
+      	icon: poi.icono,
+      	title: poi.nombre,
+      	address: poi.ciudad,
+      	lodging: isLodging,
+      	show: false
+      };
+
+      marker.showInfo = function() {
+      	$scope.map.center = { latitude: poi.localizacion[0], longitude: poi.localizacion[1] }
+        console.log("Marcador: ", marker);
+        $scope.selected.show = false;
+        $scope.selected = marker;
+        $scope.selected.show = !$scope.selected.show;
+        marker.show = $scope.selected.show;
+        $scope.$apply();
+      };
+
+      marker.closeClick = function() {
+        $scope.selected.show = false;
+        marker.show = false;
+        console.log("Marcador cerrado", marker);
+        $scope.$apply();
+      };
+
+      models.push(marker)
+    }
+
+    $scope.markers = { models: models }
   }
 
   $scope.addDestino = function(){
@@ -327,6 +373,7 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
 
     viajes.addDestino(viaje._id, {
       ciudad: $scope.ciudad.formatted_address,
+      nombre: $scope.ciudad.name,
       localizacion: [$scope.ciudad.geometry.location.A, $scope.ciudad.geometry.location.F],
       icono: $scope.ciudad.icon,
       fechaArribo: $scope.fechaArribo,
@@ -339,6 +386,23 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
     $scope.fechaArribo = '';
     $scope.fechaPartida = '';
     $window.location.reload();
+  };
+
+  $scope.addPOI = function(){
+  	if(!$scope.poi || $scope.poi === '') { return; }
+
+  	viajes.addPOI(viaje._id, {
+  	  types: $scope.poi.types,
+      ciudad: $scope.poi.formatted_address,
+      nombre: $scope.poi.name,
+      localizacion: [$scope.poi.geometry.location.A, $scope.poi.geometry.location.F],
+      icono: $scope.poi.icon,
+    }).success(function(poi) {
+      $scope.viaje.pois.push(poi);
+    });
+
+  	$scope.poi = '';
+  	$window.location.reload();
   };
 
   $scope.goBack = function(){
@@ -362,6 +426,11 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
   	})
 
   };
+
+  $scope.isLodging = function() {
+  	console.log('poi:', $scope.selected)
+  	return $scope.selected.lodging
+  }
 
   $scope.openDatepicker1 = function($event) {
     $event.preventDefault();
