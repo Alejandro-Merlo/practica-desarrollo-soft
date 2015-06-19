@@ -343,28 +343,28 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
       	show: false
       };
 
-      marker.showInfo = function() {
-      	$scope.map.center = { latitude: poi.localizacion[0], longitude: poi.localizacion[1] };
-        console.log("Marcador: ", marker);
-        $scope.selected.show = false;
-        $scope.selected = marker;
-        $scope.selected.show = !$scope.selected.show;
-        marker.show = $scope.selected.show;
-        $scope.$apply();
-      };
-
-      marker.closeClick = function() {
-        $scope.selected.show = false;
-        marker.show = false;
-        console.log("Marcador cerrado", marker);
-        $scope.$apply();
-      };
-
       models.push(marker);
     }
 
     $scope.markers = { models: models };
   }
+
+  marker.showInfo = function() {
+    $scope.map.center = { latitude: poi.localizacion[0], longitude: poi.localizacion[1] };
+    console.log("Marcador: ", marker);
+    $scope.selected.show = false;
+    $scope.selected = marker;
+    $scope.selected.show = !$scope.selected.show;
+    marker.show = $scope.selected.show;
+    $scope.$apply();
+  };
+
+  marker.closeClick = function() {
+    $scope.selected.show = false;
+    marker.show = false;
+    console.log("Marcador cerrado", marker);
+    $scope.$apply();
+  };
 
   $scope.addDestino = function(){
     if(!$scope.ciudad || $scope.ciudad === '') { return; }
