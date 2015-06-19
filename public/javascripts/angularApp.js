@@ -15,7 +15,7 @@ function($stateProvider, $urlRouterProvider) {
           return viajes.getAll();
         }]
       }
-    })
+    });
 
   $stateProvider
     .state('viajes', {
@@ -54,7 +54,7 @@ function($stateProvider, $urlRouterProvider) {
       }]
     });
 
-  $urlRouterProvider.otherwise('home')
+  $urlRouterProvider.otherwise('home');
 
 }]);
 
@@ -111,7 +111,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
   };
 
   return auth;
-}])
+}]);
 
 
 
@@ -124,8 +124,8 @@ app.factory('viajes', ['$http', 'auth', function($http, auth){
   getToken = function() {
   	return {
       headers: {Authorization: 'Bearer '+auth.getToken()}
-    }
-  }
+    };
+  };
 
   o.getAll = function() {
     return $http.get('/viajes', getToken()).success(function(data){
@@ -146,11 +146,11 @@ app.factory('viajes', ['$http', 'auth', function($http, auth){
   };
 
   o.addDestino = function(id, destino) {
-    return $http.post('/viajes/' + id + '/destinos', destino, getToken())
+    return $http.post('/viajes/' + id + '/destinos', destino, getToken());
   };
 
   o.addPOI = function(id, poi) {
-    return $http.post('/viajes/' + id + '/pois', poi, getToken())
+    return $http.post('/viajes/' + id + '/pois', poi, getToken());
   };
 
   o.delete = function(id) {
@@ -161,7 +161,7 @@ app.factory('viajes', ['$http', 'auth', function($http, auth){
   };
 
   o.delDestino = function(id, idDestino) {
-  	return $http.delete('/viajes/' + id + '/destinos/' + idDestino, getToken())
+  	return $http.delete('/viajes/' + id + '/destinos/' + idDestino, getToken());
   };
 
   return o;
@@ -194,12 +194,12 @@ function($scope, viajes, auth, ngDialog){
 
   	ngDialog.openConfirm({
   	  template: 'deleteConfirmation',
-  	  data: { objeto },
+  	  data: { objeto: objeto },
   	  className: 'ngdialog-theme-default'
   	}).then(function() {
   		viajes.delete(viaje._id);
-  	})
-  }
+  	});
+  };
 
 }]);
 
@@ -294,7 +294,7 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
   };
 
   // Resuelve la ruta a seguir en el viaje
-  if (viaje.destinos.length != 0) {
+  if (viaje.destinos.length !== 0) {
     var paths  = [];
     var events = [];
 
@@ -312,18 +312,18 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
       	latitude: destino.localizacion[0],
       	longitude: destino.localizacion[1]
       });
-    };
+    }
 
     $scope.eventSources = [events];
-  	$scope.map.center   = { latitude: viaje.destinos[0].localizacion[0], longitude: viaje.destinos[0].localizacion[1] }
-    $scope.lines        = { path: paths, stroke: { color: "#DAA520", weight: 10, opacity: 0.75 } }
+  	$scope.map.center   = { latitude: viaje.destinos[0].localizacion[0], longitude: viaje.destinos[0].localizacion[1] };
+    $scope.lines        = { path: paths, stroke: { color: "#DAA520", weight: 10, opacity: 0.75 } };
   }
 
-  if (viaje.pois.length != 0) {
+  if (viaje.pois.length !== 0) {
     var models = [];
 
-    for(var i = 0; i < viaje.pois.length; i++) {
-      var poi = viaje.pois[i];
+    for(var o = 0; o < viaje.pois.length; o++) {
+      var poi = viaje.pois[o];
       var isLodging = false;
 
       for(var e = 0; e < poi.types.length; e++) {
@@ -333,7 +333,7 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
       }
 
       marker = {
-      	id: i+1,
+      	id: o+1,
       	latitude: poi.localizacion[0],
       	longitude: poi.localizacion[1],
       	icon: poi.icono,
@@ -344,7 +344,7 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
       };
 
       marker.showInfo = function() {
-      	$scope.map.center = { latitude: poi.localizacion[0], longitude: poi.localizacion[1] }
+      	$scope.map.center = { latitude: poi.localizacion[0], longitude: poi.localizacion[1] };
         console.log("Marcador: ", marker);
         $scope.selected.show = false;
         $scope.selected = marker;
@@ -360,10 +360,10 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
         $scope.$apply();
       };
 
-      models.push(marker)
+      models.push(marker);
     }
 
-    $scope.markers = { models: models }
+    $scope.markers = { models: models };
   }
 
   $scope.addDestino = function(){
@@ -418,19 +418,19 @@ function($scope, viajes, viaje, auth, $state, $window, ngDialog){
 
   	ngDialog.openConfirm({
   	  template: 'deleteConfirmation',
-  	  data: { objeto },
+  	  data: { objeto: objeto },
   	  className: 'ngdialog-theme-default'
   	}).then(function() {
   		viajes.delDestino(viaje_id, destino._id);
   		$window.location.reload();
-  	})
+  	});
 
   };
 
   $scope.isLodging = function() {
-  	console.log('poi:', $scope.selected)
-  	return $scope.selected.lodging
-  }
+  	console.log('poi:', $scope.selected);
+  	return $scope.selected.lodging;
+  };
 
   $scope.openDatepicker1 = function($event) {
     $event.preventDefault();
@@ -474,7 +474,7 @@ function($scope, $state, auth){
       $state.go('home');
     });
   };
-}])
+}]);
 
 
 

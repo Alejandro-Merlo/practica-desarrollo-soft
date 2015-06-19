@@ -2,6 +2,11 @@ module.exports = function(grunt) {
   
   grunt.initConfig({
 
+  jshint: {
+
+      all: ['Gruntfile.js', 'app.js', 'public/javascripts/angularApp.js']
+
+    },
 
   wiredep: {
 
@@ -32,4 +37,6 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-wiredep');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.registerTask('default', 'jshint');
 };
