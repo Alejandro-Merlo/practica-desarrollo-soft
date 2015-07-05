@@ -13,4 +13,4 @@ deploy:
   user: "merloalejandro@gmail.com"
   password: "f19c59x" # can be encrypted
   domain: "amerlo"
-  app: practica-desarrollo-soft
+  app: vacacionesPermanentes
