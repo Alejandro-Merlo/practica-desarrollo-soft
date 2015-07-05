@@ -1,18 +1,24 @@
-describe(‘Hello World example ’, function() {
+'use strict';
 
-  beforeEach(module(‘myApp’));
+describe('Pagina de registro', function() {
 
-    var HelloWorldController,
-    scope;
+  beforeEach(function() {
+  	module('vacacionesPermanentes');
+  });
 
-    beforeEach(inject(function ($rootScope, $controller) {
-      scope = $rootScope.$new();
-      HelloWorldController = $controller('HelloWorldController', {
-        $scope: scope
-      });
-    }));
-    it('says hello world!', function () {
-    expect(scope.greeting).toEqual("Hello world!”);
+  var authCtrl,
+  scope;
+
+  beforeEach(inject(function ($rootScope, $controller) {
+    scope = $rootScope.$new();
+    authCtrl = $controller('AuthCtrl', {
+      $scope: scope
+    });
+  }));
+  it('debería dejar registrar a un usuario', function () {
+    authCtrl.register()
+    expect(scope.username).toEqual("Alejandro");
+    expect(scope.password).toEqual("1234");
   });
 
 });
