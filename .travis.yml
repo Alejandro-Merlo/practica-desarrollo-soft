@@ -11,6 +11,6 @@ before_script:
 deploy:
   provider: openshift
   user: "merloalejandro@gmail.com"
-  password: "f19c59x" # can be encrypted
+  password: "Mor15gan" # can be encrypted
   domain: "amerlo"
   app: nodejs
