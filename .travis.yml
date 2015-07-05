@@ -12,5 +12,5 @@ deploy:
   provider: openshift
   user: "merloalejandro@gmail.com"
   password: "f19c59x" # can be encrypted
-  domain: "nodejs-amerlo.rhcloud.com"
+  domain: "amerlo"
   app: practica-desarrollo-soft
