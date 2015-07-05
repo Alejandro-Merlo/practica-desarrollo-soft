@@ -7,3 +7,10 @@ node_js:
 
 before_script:
   - npm install -g grunt-cli
+
+deploy:
+  provider: openshift
+  user: "merloalejandro@gmail.com"
+  password: "f19c59x" # can be encrypted
+  domain: "nodejs-amerlo.rhcloud.com"
+  app: practica-desarrollo-soft

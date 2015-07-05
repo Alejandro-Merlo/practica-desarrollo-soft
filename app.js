@@ -5,7 +5,7 @@ require('./models/Viajes');
 require('./models/Pois');
 require('./models/Users');
 require('./config/passport');
-mongoose.connect('mongodb://localhost/news');
+mongoose.connect(process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/news');
 
 var express = require('express');
 var path = require('path');
