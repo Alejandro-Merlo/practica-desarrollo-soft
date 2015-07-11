@@ -23,6 +23,16 @@ module.exports = function(grunt) {
 
   },
 
+  compile: {
+
+        html: ['wiredep'],
+
+        styles: ['concat:styles', 'sass', 'clean:compile'],
+
+        js: ['concat:js']
+
+  },
+
   bower: {
 
   	dev: {
@@ -32,16 +42,6 @@ module.exports = function(grunt) {
   	}
 
   }
-
-  compile: {
-
-        html: ['jade', 'wiredep'],
-
-        styles: ['concat:styles', 'sass', 'clean:compile'],
-
-        js: ['concat:js']
-
-      }
 
     
   });
