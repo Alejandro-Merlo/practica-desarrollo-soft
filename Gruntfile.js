@@ -23,6 +23,16 @@ module.exports = function(grunt) {
 
   },
 
+  bower: {
+
+  	dev: {
+
+    	dest: 'public/javascripts/lib'
+  	
+  	}
+
+  }
+
   compile: {
 
         html: ['jade', 'wiredep'],
@@ -38,5 +48,6 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-wiredep');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.registerTask('default', ['jshint', 'wiredep']);
+  grunt.loadNpmTasks('grunt-bower');
+  grunt.registerTask('default', ['jshint', 'wiredep', 'bower']);
 };
