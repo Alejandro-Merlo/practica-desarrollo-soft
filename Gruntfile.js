@@ -22,14 +22,9 @@ module.exports = function(grunt) {
     },
 
     bower: {
-      install: {
-      	options: {
-      	  targetDir: 'public/javascripts/lib',
-          install: true,
-          verbose: true,
-          cleanBowerDir: true
-        }
-      }
+  	  dev: {
+        dest: 'public/javascripts/lib'
+  	  }
     },
 
     karma: {
