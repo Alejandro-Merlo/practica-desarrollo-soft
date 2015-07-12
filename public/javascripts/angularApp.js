@@ -463,6 +463,7 @@ function($scope, $state, auth){
     auth.register($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
+      $scope.test = 'OK';
       $state.go('home');
     });
   };
@@ -471,6 +472,7 @@ function($scope, $state, auth){
     auth.logIn($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
+      $scope.test = 'OK';
       $state.go('home');
     });
   };
