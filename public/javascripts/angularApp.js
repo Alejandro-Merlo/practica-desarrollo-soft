@@ -186,6 +186,7 @@ function($scope, viajes, auth, ngDialog){
     viajes.create({
       nombre: $scope.nombre,
     });
+    $scope.test = 'OK';
     $scope.nombre = '';
   };
 

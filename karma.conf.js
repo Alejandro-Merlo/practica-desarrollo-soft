@@ -15,9 +15,17 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/*Spec.js',
       'public/javascripts/lib/angular/angular.js',
-      'public/javascripts/angularApp.js'
+      'public/javascripts/lib/angular-ui-router/**/angular-ui-router.js',
+      'public/javascripts/lib/angular-mocks/angular-mocks.js',
+      'public/javascripts/lib/angular-google-maps/**/angular-google-maps.js',
+      'public/javascripts/lib/angular-google-places-autocomplete/**/autocomplete.js',
+      'public/javascripts/lib/ngDialog/**/ngDialog.js',
+      'public/javascripts/lib/angular-ui-calendar/**/calendar.js',
+      'public/javascripts/lib/angular-bootstrap/ui-bootstrap.js',
+
+      'public/javascripts/*.js',
+      'test/*Spec.js'
     ],
 
 
@@ -34,6 +42,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+    	'/test/*Spec.js': [ 'browserify' ]
     },
 
 
@@ -49,6 +58,12 @@ module.exports = function(config) {
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
+
+
+    frameworks: ['jasmine', 'browserify'],
+
+
+    plugins: ['karma-chrome-launcher', 'karma-firefox-launcher', 'karma-jasmine', 'karma-browserify'],
 
 
     // level of logging

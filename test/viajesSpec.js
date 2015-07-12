@@ -1,36 +1,36 @@
 'use strict';
 
-describe('MainCtrl', function() {
+describe('Pagina principal', function() {
 
   beforeEach(module('vacacionesPermanentes'));
 
-  var $controller;
+  var $scope, $controller, $rootScope;
 
-  beforeEach(inject(function(_$controller_) {
+  beforeEach(inject(function(_$controller_, _$rootScope_) {
+  	$rootScope = _$rootScope_;
+    $scope = $rootScope.$new();
     $controller = _$controller_;
-  }));
-  
-  describe('agregado y borrado de viajes', function() {
 
+    $controller('MainCtrl', { '$scope' : $scope });
+  }));
+
+  describe('MainCtrl', function() {
   	beforeEach(function() {
-      $scope = {};
-  	  controller = $controller('MainCtrl', { $scope: $scope });
   	  $scope.nombre = 'viajeEjemplo';
     });
 
-  	it('agrega un nuevo viaje', function () {
+    it('deberia poder agregar un nuevo viaje', function () {
       $scope.addViaje();
 
-      expect($scope.viajes.length).toEqual(1);
+      expect($scope.test).toEqual('OK');
     });
-  });
 
-  	it('borra un viaje', function () {
+    it('deberia poder borrar un viaje', function () {
       $scope.addViaje();
       $scope.delViaje($scope.viajes[0])
 
       expect($scope.viajes.length).toEqual(0);
     });
   });
-
+  
 });

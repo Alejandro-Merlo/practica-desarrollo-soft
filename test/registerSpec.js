@@ -4,35 +4,31 @@ describe('AuthCtrl', function() {
 
   beforeEach(module('vacacionesPermanentes'));
 
-  var $controller;
+  var $scope, $controller, $rootScope;
 
-  beforeEach(inject(function(_$controller_) {
+  beforeEach(inject(function(_$controller_, _$rootScope_) {
+  	$rootScope = _$rootScope_;
+    $scope = $rootScope.$new();
     $controller = _$controller_;
+
+    $controller('AuthCtrl', { '$scope': $scope });
   }));
-  
-  describe('registro y logeo', function() {
 
-  	beforeEach(function() {
-      $scope = {};
-  	  controller = $controller('AuthCtrl', { $scope: $scope });
-    });
-
-  	it('registra a un nuevo usuario', function () {
-      $scope.user.username = "Alejandro";
-      $scope.user.password = "1234";
-      $scope.register();
-
-      expect($scope.test).toEqual("OK");
-    });
+  beforeEach(function() {
+    $scope.user.username = "Alejandro";
+    $scope.user.password = "1234";
   });
 
-  	it('logea al usuario', function () {
-  	  $scope.user.username = "Alejandro";
-      $scope.user.password = "1234";
-  	  $scope.logIn();
+  it('registra a un nuevo usuario', function () {
+    $scope.register();
+
+    expect($scope.test).toEqual("OK");
+  });
+
+  it('logea al usuario', function () {
+    $scope.logIn();
       
-      expect($scope.test).toEqual("OK");
-    });
+    expect($scope.test).toEqual("OK");
   });
-
+  
 });
