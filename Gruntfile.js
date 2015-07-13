@@ -48,5 +48,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-bower-install-simple");
 
   grunt.registerTask("bower-install", [ "bower-install-simple" ]);
-  grunt.registerTask('default', ['jshint', 'bower-install-simple', 'wiredep', 'karma']);
+
+  grunt.registerTask('default', ['jshint', 'bower-install-simple', 'wiredep']);
 };
