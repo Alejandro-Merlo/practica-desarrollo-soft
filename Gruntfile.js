@@ -38,5 +38,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-bower');
   grunt.loadNpmTasks('grunt-karma');
-  grunt.registerTask('default', ['jshint', 'wiredep', 'bower', 'karma']);
+  grunt.registerTask('default', ['jshint', 'bower', 'wiredep', 'karma']);
 };

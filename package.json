@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "grunt --verbose"
+    "test": "grunt --verbose",
+    "postinstall": "if [ -d \"$OPENSHIFT_REPO_DIR\" ]; then (export HOME=\"$OPENSHIFT_REPO_DIR\"/..; bower install ; grunt wiredep) fi"
   },
   "dependencies": {
     "angular-moment": "^0.9.2",
@@ -21,7 +22,8 @@
     "morgan": "~1.5.1",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
-    "serve-favicon": "~2.2.0"
+    "serve-favicon": "~2.2.0",
+    "grunt": "^0.4.5"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
