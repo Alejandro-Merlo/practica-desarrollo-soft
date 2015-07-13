@@ -36,6 +36,6 @@
     "ngDialog": "~0.4.0",
     "angular-ui-calendar": "latest",
     "angular-bootstrap": "latest",
-    "angular-mocks":"~1.4.2"
+    "angular-mocks":"1.3.15"
   }
 }
