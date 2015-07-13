@@ -63,7 +63,7 @@ module.exports = function(config) {
     frameworks: ['jasmine', 'browserify'],
 
 
-    plugins: ['karma-chrome-launcher', 'karma-firefox-launcher', 'karma-jasmine', 'karma-browserify'],
+    plugins: ['karma-chrome-launcher', 'karma-firefox-launcher', 'karma-jasmine', 'karma-browserify', 'karma-phantomjs-launcher'],
 
 
     // level of logging
